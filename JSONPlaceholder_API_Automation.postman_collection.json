@@ -1,0 +1,178 @@
+{
+  "info": {
+    "_postman_id": "51714652-3a89-424a-bd7f-737805e093d4",
+    "name": "JSONPlaceholder_API_Automation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54264475",
+    "_collection_link": "https://go.postman.co/collection/54264475-51714652-3a89-424a-bd7f-737805e093d4?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "All_User_Info",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.environment.set(\"BaseUrl\", \"https://jsonplaceholder.typicode.com\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json(); \r",
+              "\r",
+              "pm.test(\"1. Response should be OK with the status code 200\",function (){ \r",
+              "pm.response.to.have.status(200); \r",
+              "});\r",
+              "\r",
+              "pm.test(\"2. Response should be a non-empty array\",function (){\r",
+              "pm.expect(response).to.be.an(\"array\");\r",
+              "pm.expect(response.length).to.be.greaterThan(0);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"3. Response should contain at least one user information\",function (){ \r",
+              "pm.expect(response[0]).to.be.an(\"object\");; \r",
+              "});\r",
+              "\r",
+              "pm.test(\"4. Each user should have an id, name and email\",function (){\r",
+              "response.forEach(function(user){\r",
+              "pm.expect(user).to.have.property(\"id\");\r",
+              "pm.expect(user).to.have.property(\"name\");\r",
+              "pm.expect(user).to.have.property(\"email\");\r",
+              "});\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BaseUrl}}/users",
+          "host": [
+            "{{BaseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Random_Selection",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\nconst randomUser = response[Math.floor(Math.random() * response.length)];\r\nconst randomUserInfo = response[randomUser]\r\n\r\npm.environment.set(\"User_id\", randomUser.id);\r\npm.environment.set(\"User_name\", randomUser.name);\r\npm.environment.set(\"User_email\", randomUser.email);\r\npm.environment.set(\"User_company_name\", randomUser.company.name);\r\npm.environment.set(\"User_phone\", randomUser.phone);\r\n\r\npm.test(\"1. Response should be OK with the status code 200\",function (){ \r\npm.response.to.have.status(200); \r\n});\r\n\r\npm.test(\"2. User ID should save in environment\",function (){\r\npm.expect(pm.environment.get(\"User_id\")).to.exist;\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BaseUrl}}/users",
+          "host": [
+            "{{BaseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Specific_User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"1. Response should be OK with the status code 200\",function (){ \r\npm.response.to.have.status(200); \r\n});\r\n\r\npm.test(\"2. Returned user ID should match saved ID\",function (){\r\npm.expect(String(response.id)).to.eql(String(pm.environment.get(\"User_id\")));\r\n});\r\n"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BaseUrl}}/users/{{User_id}}",
+          "host": [
+            "{{BaseUrl}}"
+          ],
+          "path": [
+            "users",
+            "{{User_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update_User_Info",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const nName = \"Humayra Siddika\";\r\nconst nEmail = \"humayra@gmail.com\";\r\nconst nCompanyName = \"Ostad\";\r\n\r\nconst newName = `${nName} ; Update ${Date.now()}`;\r\nconst newEmail = `${nEmail} ; Update ${Date.now()}`;\r\nconst newCompanyName = `${nCompanyName} ; Update ${Date.now()}`;\r\n\r\npm.environment.set(\"updated_User_name\", newName);\r\npm.environment.set(\"updated_User_email\", newEmail);\r\npm.environment.set(\"updated_User_company_name\", newCompanyName);\r\n"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\n\npm.test(\"1. Returned ID should be the same as stored ID\",function (){\npm.expect(response.id).to.eql(parseInt(pm.environment.get(\"User_id\")));\n});\n\n// The request body updates only name, email and company name, \n// Issue: PUT response does not contain the \"phone\" field, so the phone validation cannot be performed.\npm.test(\"2. Response phone number should not be empty\", () => {\npm.expect(response.phone).to.not.be.empty;\n});\n\npm.test(\"3. Returned name should match the updated name\",function (){\npm.expect(response.name).to.eql(pm.environment.get(\"updated_User_name\"));\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"{{updated_User_name}}\",\r\n    \"email\": \"{{updated_User_email}}\",\r\n    \"company\": {\r\n        \"name\": \"{{updated_User_company_name}}\"\r\n    },\r\n    \"phone\": \"{{User_phone}}\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{BaseUrl}}/users/{{User_id}}",
+          "host": [
+            "{{BaseUrl}}"
+          ],
+          "path": [
+            "users",
+            "{{User_id}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

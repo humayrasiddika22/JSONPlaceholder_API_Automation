@@ -1,1 +1,1 @@
-# JSONPlaceholder_API_Automation
+# JSONPlaceholder API Automation

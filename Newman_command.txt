@@ -1,0 +1,2 @@
+in cmd: 
+newman run JSONPlaceholder_API_Automation.postman_collection.json -e JSONPlaceholder_API_Automation.postman_collection.json -n 2 --delay-request 100 -r cli,html,json --reporter-html-export "D:\my things\skills\SQA\Ostad\MODULE 17\Project-2\JSONPlaceholder_API_Automation\NewmanReport.html"
