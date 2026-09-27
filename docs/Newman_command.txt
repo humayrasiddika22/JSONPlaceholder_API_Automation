@@ -1,2 +1,15 @@
-in cmd: 
-newman run JSONPlaceholder_API_Automation.postman_collection.json -e JSONPlaceholder_API_Automation.postman_collection.json -n 2 --delay-request 100 -r cli,html,json --reporter-html-export "D:\my things\skills\SQA\Ostad\MODULE 17\Project-2\JSONPlaceholder_API_Automation\NewmanReport.html"
+# 1. Install Newman globally
+
+npm install -g newman
+
+# 2. Verify Newman installation
+
+newman -v
+
+# 3. Install the HTML Extra reporter globally
+
+npm install -g newman-reporter-htmlextra
+
+# 4. Run your collection with corrected quotes and paths
+
+newman run collection/JSONPlaceholder_API_Automation.postman_collection.json -e environment/JSONPlaceholder_API_Automation_env.postman_environment.json -n 2 --delay-request 100 -r cli,htmlextra,json --reporter-htmlextra-export "../JSONPlaceholder_API_Automation/reports/NewmanReport.html"
